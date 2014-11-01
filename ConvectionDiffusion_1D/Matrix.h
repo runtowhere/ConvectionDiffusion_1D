@@ -8,12 +8,13 @@
 
 #ifndef __MatrixClass__Matrix__
 #define __MatrixClass__Matrix__
-#define TYPE double 
+#define TYPE long double
 #include <iostream>
 #include <vector>
 #include <cmath>
 #include <cstdio>
 #include <ctime>
+#include <cassert>
 
 using std::vector;
 using std::cout;
@@ -62,7 +63,6 @@ public:
     Matrix& colSwap(int i, int j);
     Matrix& transpose();
     double Norm2Vec();
-    double NormInfVec();
     int transpose(Matrix& res);
     bool square();
 
@@ -82,8 +82,6 @@ public:
 public:
     friend std::ostream& operator<<(std::ostream& out, const Matrix& m);
     friend std::ostream& latex(std::ostream& out, const Matrix& m, int line);
-    
-public:
 
 };
 
@@ -114,7 +112,16 @@ int upperSolve(const Matrix& u,const Matrix& rhs, Matrix& res);
 
 class mVector : public Matrix {
 public:
-    TYPE& operator()(int index){
+    using Matrix::operator=;
+public:
+    int dim(){
+        return this -> mNumRows;
+    }
+    int dim() const{
+        return this -> mNumRows;
+    }
+public:
+    TYPE& operator[](int index){
         return data[0][index];
     }
     const TYPE& operator[](int index) const{
@@ -130,7 +137,11 @@ public:
             data[0][i] = 0;
         }
     }
+    double NormInf();
+
 };
+
+
 
 
 

@@ -11,13 +11,14 @@
 
 #include <stdio.h>
 #include "Matrix.h"
+#include "Tridiagonal.h"
 
 using std::cout;
 using std::cin;
 using std::endl;
 
-typedef double (*pFunc)(double t, double x);
-
+typedef double (*pFunc)(double t, double x, double u);
+typedef double (*pFunc_2)(double t, double x);
 class FirstOrderCD{
     friend class FirstOrderCDSolver;
 private:
@@ -36,18 +37,23 @@ class BoundaryConditions_1D{
     friend class FirstOrderCDSolver;
 private:
     bool isDirichelt = 0;
-    pFunc mpBoundaryFunc;
-    pFunc mpInitialFunc;
+    pFunc_2 mpBoundaryFunc;
+    pFunc_2 mpInitialFunc;
     double xMin;
     double xMax;
+public:
+    BoundaryConditions_1D(pFunc_2 boundary, pFunc_2 initial){
+        mpBoundaryFunc = boundary;
+        mpInitialFunc = initial;
+    }
 public:
     void SetDirichlet(){
         isDirichelt = 1;
     }
-    void SetBoundaryFunc(pFunc f){
+    void SetBoundaryFunc(pFunc_2 f){
         mpBoundaryFunc = f;
     }
-    void SetInitialFunc(pFunc f){
+    void SetInitialFunc(pFunc_2 f){
         mpInitialFunc = f;
     }
     void SetRegion(double x1, double x2){
@@ -90,18 +96,27 @@ public:
     bool ShouldChangeTimeStep(){
         return 0;
     }
-    void CentralExplicitSolve();
-    void UpwindSolve();
-    void PrepareCentral();
-    void PrepareUpWindSolve();
-    void ComputeCentral();
-    void ComputeUpWind();
-    
-    double UpWindFuncC(double t, double x){
-        return this -> mpPDE -> mFuncC(t,x) + 1 /2.0 * mpPDE -> mFuncA(t,x) * xStep;
+    void SetXStep(){
+        xStep = (mpCondition -> xMax - mpCondition -> xMin) / (nNodes - 1);
     }
+    void UpdateBoundary(mVector& u, double atTime);
+    void SetInitialValue(mVector& u);
+    
+    void CentralExplicitSolve();
+    void ComputeCentral(mVector& uPre, mVector& uPost, double atTime);
+    
+    void UpwindSolve();
+    void ComputeUpWind(mVector& uPre, mVector& uPost, double atTime);
+   
+// Error when trying to define local function and pFunc to it , How to Fix?
+//    double UpWindFuncC(double t, double x){
+//        return this -> mpPDE -> mFuncC(t,x) + 1 /2.0 * mpPDE -> mFuncA(t,x) * xStep;
+//    }
     
 };
+
+
+
 
 
 #endif /* defined(__ConvectionDiffusion_1D__ConvectionDiffusion_1D__) */

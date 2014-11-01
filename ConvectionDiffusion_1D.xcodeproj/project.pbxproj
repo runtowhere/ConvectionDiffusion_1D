@@ -27,9 +27,8 @@
 /* Begin PBXFileReference section */
 		DE26B85D1A034C5A00D5B9C6 /* ConvectionDiffusion_1D */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ConvectionDiffusion_1D; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE26B8601A034C5A00D5B9C6 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		DE26B86A1A03587100D5B9C6 /* ConvectionDiffusion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConvectionDiffusion.h; sourceTree = "<group>"; };
 		DE26B86B1A03587100D5B9C6 /* Matrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Matrix.cpp; sourceTree = "<group>"; };
-		DE26B86C1A03587100D5B9C6 /* Matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Matrix.h; sourceTree = "<group>"; };
+		DE26B86C1A03587100D5B9C6 /* Matrix.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = Matrix.h; sourceTree = "<group>"; };
 		DE600B701A048B3D00086E18 /* ConvectionDiffusion_1D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConvectionDiffusion_1D.cpp; sourceTree = "<group>"; };
 		DE600B711A048B3D00086E18 /* ConvectionDiffusion_1D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConvectionDiffusion_1D.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -64,11 +63,10 @@
 		DE26B85F1A034C5A00D5B9C6 /* ConvectionDiffusion_1D */ = {
 			isa = PBXGroup;
 			children = (
-				DE26B86A1A03587100D5B9C6 /* ConvectionDiffusion.h */,
-				DE600B701A048B3D00086E18 /* ConvectionDiffusion_1D.cpp */,
-				DE600B711A048B3D00086E18 /* ConvectionDiffusion_1D.h */,
 				DE26B86B1A03587100D5B9C6 /* Matrix.cpp */,
 				DE26B86C1A03587100D5B9C6 /* Matrix.h */,
+				DE600B701A048B3D00086E18 /* ConvectionDiffusion_1D.cpp */,
+				DE600B711A048B3D00086E18 /* ConvectionDiffusion_1D.h */,
 				DE26B8601A034C5A00D5B9C6 /* main.cpp */,
 			);
 			path = ConvectionDiffusion_1D;

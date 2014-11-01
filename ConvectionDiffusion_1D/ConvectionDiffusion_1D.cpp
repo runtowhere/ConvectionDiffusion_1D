@@ -8,3 +8,77 @@
 
 #include "ConvectionDiffusion_1D.h"
 
+void FirstOrderCDSolver::SetInitialValue(mVector &u){
+    int i;
+    for (i = 0; i != u.dim(); i++) {
+        u[i] = mpCondition -> mpInitialFunc(0, mpCondition -> xMin + i * xStep);
+    }
+}
+
+void FirstOrderCDSolver::CentralExplicitSolve(){
+    SetXStep();
+    mVector uPre(nNodes);
+    mVector uPost(nNodes);
+    SetInitialValue(uPost);
+//    cout << uPost;
+    double tNow;
+    for (int i = 1; (tNow = i * timeStep + initialTime) <= finalTime; i++) {
+        if (ShouldChangeTimeStep()) {
+            ;
+        }
+        ComputeCentral(uPre, uPost, tNow);
+    }
+    
+//    mVector ref(nNodes);
+//    for (int i = 0; i != nNodes; i++) {
+//        ref[i] = mpCondition -> mpBoundaryFunc(finalTime, mpCondition -> xMin + i * xStep);
+//    }
+//    cout << ref - uPost << endl;
+    cout << uPost << endl;
+}
+
+void FirstOrderCDSolver::ComputeCentral(mVector& uPre, mVector& uPost, double atTime){
+    double v,u;
+    int i;
+    uPre = uPost;
+    for (i = 1; i != nNodes - 1; i++) {
+        v = mpPDE -> mFuncA(atTime, mpCondition -> xMin + i * xStep, uPre[i]) * timeStep / xStep;
+        u = mpPDE -> mFuncC(atTime, mpCondition -> xMin + i * xStep, uPre[i]) * timeStep / xStep * xStep;
+        uPost[i] = (u - 1/2.0 * v) * uPre[i + 1] + (1 - 2 * u) * uPre[i]  + (u + 1 / 2.0 * v) * uPre[i - 1];
+    }
+    uPost[0] = mpCondition -> mpBoundaryFunc(atTime, mpCondition -> xMin);
+    uPost[nNodes - 1] = mpCondition -> mpBoundaryFunc(atTime, mpCondition -> xMax);
+}
+
+
+void FirstOrderCDSolver::UpwindSolve(){
+    SetXStep();
+    mVector uPre(nNodes);
+    mVector uPost(nNodes);
+    SetInitialValue(uPost);
+    double tNow;
+    for (int i = 1; (tNow = i * timeStep + initialTime) <= finalTime; i++) {
+        if (ShouldChangeTimeStep()) {}
+        ComputeUpWind(uPre, uPost, tNow);
+    }
+//    mVector ref(nNodes);
+//    for (int i = 0; i != nNodes; i++) {
+//        ref[i] = mpCondition -> mpBoundaryFunc(finalTime, mpCondition -> xMin + i * xStep);
+//    }
+//    cout << ref - uPost << endl;
+    cout << uPost;
+}
+void FirstOrderCDSolver::ComputeUpWind(mVector& uPre, mVector& uPost, double atTime){
+    double v,u;
+    int i;
+    uPre = uPost;
+    for (i = 1; i != nNodes - 1; i++) {
+        v = mpPDE -> mFuncA(atTime, mpCondition -> xMin + i * xStep, uPre[i]) * timeStep / xStep;
+        u = (mpPDE -> mFuncC(atTime, mpCondition -> xMin + i * xStep, uPre[i])
+             + 1 / 2.0 * mpPDE -> mFuncA(atTime, mpCondition -> xMin + i * xStep,uPre[i]) * xStep)
+            * timeStep / xStep * xStep;
+        uPost[i] = (u - 1/2.0 * v) * uPre[i + 1] + (1 - 2 * u) * uPre[i]  + (u + 1 / 2.0 * v) * uPre[i - 1];
+    }
+    uPost[0] = mpCondition -> mpBoundaryFunc(atTime, mpCondition -> xMin);
+    uPost[nNodes - 1] = mpCondition -> mpBoundaryFunc(atTime, mpCondition -> xMax);
+}

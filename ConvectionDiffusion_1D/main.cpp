@@ -7,30 +7,58 @@
 //
 
 #include <iostream>
+#include <cmath>
+#include <cassert>
 #include "Matrix.h"
 #include "ConvectionDiffusion_1D.h"
+#include "Tridiagonal.h"
+
+#define C1 0.0001
+#define Delta 0.1
+
 using std::cout;
 using std::endl;
 using std::cin;
 
-double u(double t, double x){
-    return 5 * t + x;
-}
-pFunc p1 = u;
-
-double f(double t, double x){
-    return p1(t,x) + 1;
+double a(double t, double x, double u){
+    return u;
 }
 
+double c(double t, double x, double u){
+    return C1;
+}
+
+double rhs(double t, double x, double u){
+    return 0;
+}
+
+double initial(double t, double x){
+    if (x >= 0 ) {
+        return 1 + Delta;
+    }
+    else{
+        return 1;
+    }
+}
 
 int main(int argc, const char * argv[])
 {
-    pFunc p1;
-    p1 = u;
-    pFunc p2;
-    cout << f(3,4);
     
-    cout << "Je suis ton pere" << endl;
+    FirstOrderCD cd1(&a, &c, &rhs); // a, c, rhs
+    BoundaryConditions_1D cond1(&initial,&initial); // boundary, initial
+    cond1.SetDirichlet();
+    cond1.SetRegion(-1, 1);
+    FirstOrderCDSolver sol1(&cd1, &cond1);
+    
+    sol1.SetInitialTime(0);
+    sol1.SetFinalTime(0.08);
+    sol1.SetNumberNodes(25);
+    sol1.SetTimeStep(0.001);
+//    sol1.CentralExplicitSolve();
+    sol1.UpwindSolve();
+
+    
+    
     return 0;
 }
 

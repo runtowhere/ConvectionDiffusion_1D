@@ -453,7 +453,7 @@ double Matrix::Norm2Vec(){
     return sqrt(sum);
 }
 
-double Matrix::NormInfVec(){
+double mVector::NormInf(){
     double max = 0;
     for (int i = 0; i != this->mNumRows; i++) {
         if (std::abs((double) this->data[0][i]) > max ) {
@@ -581,4 +581,5 @@ std::ostream& latex(std::ostream& out, const Matrix& m, int line){
     }
     return out;
 }
+
 
