@@ -8,7 +8,7 @@
 
 #ifndef __MatrixClass__Matrix__
 #define __MatrixClass__Matrix__
-#define TYPE double
+#define TYPE double 
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -16,33 +16,36 @@
 #include <ctime>
 
 using std::vector;
+using std::cout;
+using std::endl;
 
 class Matrix{
     //  Members
-private:
-    int nRow;
-    int nCol;
-    TYPE **mat;
-public:
-    int row(){
-        return nRow;
-    }
-    int col(){
-        return nCol;
-    }
-    int col() const{
-        return nCol;
-    }
-    int row() const{
-        return nRow;
-    }
+protected:
+    int mNumRows;
+    int mNumCols;
+    TYPE **data;
+    
 public:
     
     // Operators
     TYPE* operator[](int index);
     const TYPE* operator[](int index) const;
-    TYPE operator()(int rowIndex, int colIndex);
-
+    TYPE& operator()(int rowIndex, int colIndex);
+    const TYPE& operator() (int rowIndex, int colIndex) const;
+    // Members
+    int GetNumRows(){
+        return mNumRows;
+    }
+    int GetNumRows() const{
+        return mNumRows;
+    }
+    int GetNumCols() const{
+        return mNumCols;
+    }
+    int GetNumCols(){
+        return mNumCols;
+    }
     // Operations
     Matrix& operator+=(const Matrix& rhs);
     Matrix& operator-=(const Matrix& rhs);
@@ -61,7 +64,7 @@ public:
     double Norm2Vec();
     double NormInfVec();
     int transpose(Matrix& res);
-    bool isSquare();
+    bool square();
 
     // Constructors
     Matrix();
@@ -69,11 +72,18 @@ public:
     Matrix(int dim);
     Matrix(const Matrix& m);
     // Deconstructor
-    ~Matrix();
+    ~Matrix(){
+        for (int i = 0; i != this -> mNumCols; i++) {
+            delete [] data[i];
+        }
+        delete [] data;
+    }
     
 public:
     friend std::ostream& operator<<(std::ostream& out, const Matrix& m);
     friend std::ostream& latex(std::ostream& out, const Matrix& m, int line);
+    
+public:
 
 };
 
@@ -100,6 +110,29 @@ int LDLSolve(const Matrix& m, const Matrix& rhs, Matrix& res);
 
 int lowerSolve(const Matrix& l,const Matrix& rhs, Matrix& res);
 int upperSolve(const Matrix& u,const Matrix& rhs, Matrix& res);
+
+
+class mVector : public Matrix {
+public:
+    TYPE& operator()(int index){
+        return data[0][index];
+    }
+    const TYPE& operator[](int index) const{
+        return data[0][index];
+    }
+public:
+    mVector(int dim){
+        mNumRows = dim;
+        mNumCols = 1;
+        data = new TYPE*[1];
+        data[0] = new TYPE[dim];
+        for (int i = 0; i != dim; i++) {
+            data[0][i] = 0;
+        }
+    }
+};
+
+
 
 
 #endif /* defined(__MatrixClass__Matrix__) */

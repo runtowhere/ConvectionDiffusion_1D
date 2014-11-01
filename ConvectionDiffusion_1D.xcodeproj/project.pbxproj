@@ -8,8 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		DE26B8611A034C5A00D5B9C6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE26B8601A034C5A00D5B9C6 /* main.cpp */; };
-		DE26B8631A034C5A00D5B9C6 /* ConvectionDiffusion_1D.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = DE26B8621A034C5A00D5B9C6 /* ConvectionDiffusion_1D.1 */; };
 		DE26B86E1A03587100D5B9C6 /* Matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE26B86B1A03587100D5B9C6 /* Matrix.cpp */; };
+		DE600B721A048B3D00086E18 /* ConvectionDiffusion_1D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE600B701A048B3D00086E18 /* ConvectionDiffusion_1D.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -19,7 +19,6 @@
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
-				DE26B8631A034C5A00D5B9C6 /* ConvectionDiffusion_1D.1 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -28,10 +27,11 @@
 /* Begin PBXFileReference section */
 		DE26B85D1A034C5A00D5B9C6 /* ConvectionDiffusion_1D */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ConvectionDiffusion_1D; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE26B8601A034C5A00D5B9C6 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		DE26B8621A034C5A00D5B9C6 /* ConvectionDiffusion_1D.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ConvectionDiffusion_1D.1; sourceTree = "<group>"; };
 		DE26B86A1A03587100D5B9C6 /* ConvectionDiffusion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConvectionDiffusion.h; sourceTree = "<group>"; };
 		DE26B86B1A03587100D5B9C6 /* Matrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Matrix.cpp; sourceTree = "<group>"; };
 		DE26B86C1A03587100D5B9C6 /* Matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Matrix.h; sourceTree = "<group>"; };
+		DE600B701A048B3D00086E18 /* ConvectionDiffusion_1D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConvectionDiffusion_1D.cpp; sourceTree = "<group>"; };
+		DE600B711A048B3D00086E18 /* ConvectionDiffusion_1D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConvectionDiffusion_1D.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,10 +65,11 @@
 			isa = PBXGroup;
 			children = (
 				DE26B86A1A03587100D5B9C6 /* ConvectionDiffusion.h */,
+				DE600B701A048B3D00086E18 /* ConvectionDiffusion_1D.cpp */,
+				DE600B711A048B3D00086E18 /* ConvectionDiffusion_1D.h */,
 				DE26B86B1A03587100D5B9C6 /* Matrix.cpp */,
 				DE26B86C1A03587100D5B9C6 /* Matrix.h */,
 				DE26B8601A034C5A00D5B9C6 /* main.cpp */,
-				DE26B8621A034C5A00D5B9C6 /* ConvectionDiffusion_1D.1 */,
 			);
 			path = ConvectionDiffusion_1D;
 			sourceTree = "<group>";
@@ -125,6 +126,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DE26B86E1A03587100D5B9C6 /* Matrix.cpp in Sources */,
+				DE600B721A048B3D00086E18 /* ConvectionDiffusion_1D.cpp in Sources */,
 				DE26B8611A034C5A00D5B9C6 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

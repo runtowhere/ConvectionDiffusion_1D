@@ -11,30 +11,29 @@
 using std::cout;
 using std::endl;
 using std::cin;
-
 // Algorithms
 int LUDecomp(const Matrix& m, Matrix& l, Matrix& u){ // l, u blank Matrices
-    int n = m.row();
-    if(m.row() != m.col()){
+    int n = m.GetNumRows();
+    if(m.GetNumRows() != m.GetNumCols()){
         std::cout << "Not Square" << std::endl;
         return 0;
     }
     int i, j, k; // Copy
     for(int i = 0; i != n; ++i)
         for(int j = 0; j != n; ++j){
-            u[i][j] = m[i][j];
+            u(i,j) = m(i,j);
         }
     
-    for(i = 0; i != n; ++i) l[i][i] = 1;
+    for(i = 0; i != n; ++i) l(i,i) = 1;
     
     for(k = 0; k != n - 1; ++k){ // L
         for(i = k + 1; i != n; ++i){
-            l[i][k] = u[i][k] / u[k][k];
+            l(i,k) = u(i,k) / u(k,k);
         }
         for(i = k + 1; i != n; ++i){ // U
-            u[i][k] = 0;
+            u(i,k) = 0;
             for(j = k + 1; j != n; ++j){
-                u[i][j] = u[i][j] - l[i][k] * u[k][j];
+                u(i,j) = u(i,j) - l(i,k) * u(k,j);
             }
         }
     }
@@ -42,94 +41,94 @@ int LUDecomp(const Matrix& m, Matrix& l, Matrix& u){ // l, u blank Matrices
 }
 
 int LUPivotDecomp(const Matrix& m, Matrix& p, Matrix& l, Matrix& u){ // Mathematical Subscripts
-
-    int n = m.row();
+    
+    int n = m.GetNumRows();
     int i, j, k;
-    int *per = new int[n - 1]; // at k, exchange row k with row per[k - 1]
+    int *per = new int[n - 1]; // at k, exchange GetNumRows() k with GetNumRows() per[k - 1]
     TYPE max = 0;
     TYPE temp = 0;
     //Test
-    if(m.row() != m.col()){
+    if(m.GetNumRows() != m.GetNumCols()){
         std::cout << "Not Square" << std::endl;
         return 0;
     }
     //Copy M into U
     for(i = 0; i != n; ++i)
         for(j = 0; j != n; ++j){
-            u[i][j] = m[i][j];
+            u(i,j) = m(i,j);
         }
     //Initiate L
-    for(i = 0; i != n; ++i) l[i][i] = 1;
-
+    for(i = 0; i != n; ++i) l(i,i) = 1;
+    
     //Computation
     for(k = 1; k <= n; k++){
         // Find Permutations
-        max = std::abs(u[k-1][k-1]);
+        max = std::abs(u(k-1,k-1));
         per[k-1] = k;
         for(i = k; i <= n; i++){
-            if(std::abs(u[i-1][k-1]) > max){
-                max = std::abs(u[i-1][k-1]);
+            if(std::abs(u(i-1,k-1)) > max){
+                max = std::abs(u(i-1,k-1));
                 per[k-1] = i;
             }
         }
         u.rowSwap(k,per[k - 1]);
         // Compute L
         for(i = k + 1; i <= n; i++){
-            l[i-1][k-1] = u[i-1][k-1] / u[k-1][k-1];
+            l(i-1,k-1) = u(i-1,k-1) / u(k-1,k-1);
         }
         // Update U
         for(i = k + 1; i <= n; i++){
-            u[i - 1][k - 1] = 0;
+            u(i - 1,k - 1) = 0;
             for(j = k + 1; j <= n; ++j){
-                u[i - 1][j - 1] = u[i - 1][j - 1] - l[i - 1][k - 1] * u[k - 1][j - 1];
+                u(i - 1,j - 1) = u(i - 1,j - 1) - l(i - 1,k - 1) * u(k - 1,j - 1);
             }
         }
     }
     // Compute P
-    for(i = 1; i <= n; i++) p[i-1][i-1] = 1;
+    for(i = 1; i <= n; i++) p(i-1,i-1) = 1;
     for(k = 1; k <= n-1; k++) p.rowSwap(k, per[k-1]);
     
     // Compute L
     for(k = 1; k != n - 1; k++){
         if(per[k] != k + 1 ){
-            for(j = 1; j != k + 1; j++){  // Exchange Row k+1 and row per[k] in the Lower Left Matrix
-                temp = l[k][j-1];
-                l[k][j-1] = l[ (per[k] - 1) ][j-1];
-                l[ (per[k] - 1) ][j-1] = temp;
+            for(j = 1; j != k + 1; j++){  // Exchange GetNumRows() k+1 and GetNumRows() per[k] in the Lower Left Matrix
+                temp = l(k,j-1);
+                l(k,j-1) = l( (per[k] - 1) ,j-1);
+                l( (per[k] - 1) ,j-1) = temp;
             }
         }
     }
-
+    
     return 0;
 }
 
 int CholeskyDecomp(const Matrix& m, Matrix& l){
     int i, p, k;
-    int n = m.row();
+    int n = m.GetNumRows();
     TYPE temp;
     
-    l[0][0] = sqrt(m[0][0]);
+    l(0,0) = sqrt(m(0,0));
     for(i = 1; i <= n; i++){
-        l[i - 1][0] = m[i - 1][0] / l[0][0];
+        l(i - 1,0) = m(i - 1,0) / l(0,0);
     }
     for(k = 2; k <= n; k++){
         temp = 0;
         for(p = 1; p <= k - 1; p++){
-            temp += l[k - 1][p - 1] * l[k - 1][p - 1];
+            temp += l(k - 1,p - 1) * l(k - 1,p - 1);
         }
-        if(m[k - 1][k - 1] - temp < 0){ // Negative Diagonal 
+        if(m(k - 1,k - 1) - temp < 0){ // Negative Diagonal
             cout << "Cholesky: Diagonal cannot Sqrt at " << k << endl;
             return 1;
         }
         else{
-        l[k - 1][k - 1] = sqrt(m[k - 1][k - 1] - temp);
+            l(k - 1,k - 1) = sqrt(m(k - 1,k - 1) - temp);
         }
         for(i = k + 1; i <= n; i++){
             temp = 0;
             for(p = 1; p <= k - 1; p++){
-                temp += l[i - 1][p - 1] * l[k - 1][p - 1];
+                temp += l(i - 1,p - 1) * l(k - 1,p - 1);
             }
-            l[i - 1][k - 1] = (m[i - 1][k - 1] - temp) / l[k-1][k-1];
+            l(i - 1,k - 1) = (m(i - 1,k - 1) - temp) / l(k-1,k-1);
         }
     }
     
@@ -138,26 +137,26 @@ int CholeskyDecomp(const Matrix& m, Matrix& l){
 
 int LDLDecomp(const Matrix& m, Matrix& l, Matrix& d){
     int i, j, k;
-    int n = m.row();
+    int n = m.GetNumRows();
     TYPE temp;
     for(i = 1; i <= n; i++){
-        l[i - 1][i - 1] = 1;
+        l(i - 1,i - 1) = 1;
     }
     for(j = 1; j <= n; j++){
         TYPE* v = new TYPE[j - 1];
         temp = 0;
         for(k = 1; k <= j - 1; k++){
-            v[k - 1] = d[k - 1][k - 1] * l[j - 1][k - 1];
-            temp += l[j - 1][k - 1] * v[k - 1];
+            v[k - 1] = d(k - 1,k - 1) * l(j - 1,k - 1);
+            temp += l(j - 1,k - 1) * v[k - 1];
         }
-        d[j - 1][j - 1] = m[j - 1][j - 1] - temp;
+        d(j - 1,j - 1) = m(j - 1,j - 1) - temp;
         for(i = j + 1; i <= n; i++){
             temp = 0;
             for(k = 1; k <= j - 1; k++){
-                temp += l[i -1][k - 1] * v[k - 1];
-
+                temp += l(i -1,k - 1) * v[k - 1];
+                
             }
-            l[i - 1][j - 1] = (m[i-1][j-1] - temp) / d[j-1][j-1];
+            l(i - 1,j - 1) = (m(i-1,j-1) - temp) / d(j-1,j-1);
         }
         delete v;
     }
@@ -166,8 +165,8 @@ int LDLDecomp(const Matrix& m, Matrix& l, Matrix& d){
 
 
 int LUSolve(const Matrix& m, const Matrix& rhs, Matrix& res){ // NEED RECYCLE
-    if(rhs.col() == 1){
-        int n = m.row();
+    if(rhs.GetNumCols() == 1){
+        int n = m.GetNumRows();
         Matrix l(n,n), u(n,n);
         LUDecomp(m, l, u);
         Matrix temp(n,1);
@@ -175,20 +174,20 @@ int LUSolve(const Matrix& m, const Matrix& rhs, Matrix& res){ // NEED RECYCLE
         upperSolve(u, temp, res);
     }
     else{
-        int n = m.row();
+        int n = m.GetNumRows();
         Matrix l(n,n), u(n,n);
         LUDecomp(m, l, u);
-        for(int i = 1; i <= rhs.col(); i++){
+        for(int i = 1; i <= rhs.GetNumCols(); i++){
             Matrix temp1(n,1);
             Matrix temp2(n,1);
             Matrix right(n,1);
-            for(int j = 1; j <= rhs.row(); j++){
-                right[j - 1][0] = rhs[j - 1][i - 1];
+            for(int j = 1; j <= rhs.GetNumRows(); j++){
+                right(j - 1,0) = rhs(j - 1,i - 1);
             }
             lowerSolve(l, right, temp1);
             upperSolve(u, temp1, temp2);
-            for(int j = 1; j <= rhs.row(); j++){
-                res[j - 1][i - 1] = temp2[j - 1][0];
+            for(int j = 1; j <= rhs.GetNumRows(); j++){
+                res(j - 1,i - 1) = temp2(j - 1,0);
             }
         }
     }
@@ -196,8 +195,8 @@ int LUSolve(const Matrix& m, const Matrix& rhs, Matrix& res){ // NEED RECYCLE
 }
 
 int LUPivotSolve(const Matrix& m, const Matrix& rhs, Matrix& res){ // NEED
-    if(rhs.col() == 1){
-        int n = m.row();
+    if(rhs.GetNumCols() == 1){
+        int n = m.GetNumRows();
         Matrix p(n,n), l(n,n),u(n,n);
         LUPivotDecomp(m, p, l, u);
         Matrix newb(n,1);
@@ -207,21 +206,21 @@ int LUPivotSolve(const Matrix& m, const Matrix& rhs, Matrix& res){ // NEED
         upperSolve(u, temp, res);
     }
     else{
-        int n = m.row();
+        int n = m.GetNumRows();
         Matrix p(n,n), l(n,n),u(n,n);
         LUPivotDecomp(m, p, l, u);
-        for(int i = 1; i <= rhs.col(); i++){
+        for(int i = 1; i <= rhs.GetNumCols(); i++){
             Matrix right(n,1);
-            for(int j = 1; j <= rhs.row(); j++){
-                right[j-1][0] = rhs[j - 1][i - 1];
+            for(int j = 1; j <= rhs.GetNumRows(); j++){
+                right(j-1,0) = rhs(j - 1,i - 1);
             }
             right = p * right;
             Matrix temp1(n,1);
             Matrix temp2(n,1);
             lowerSolve(l, right, temp1);
             upperSolve(u, temp1, temp2);
-            for(int j = 1; j <= rhs.row(); j++){
-                res[j - 1][i - 1] = temp2[j - 1][0];
+            for(int j = 1; j <= rhs.GetNumRows(); j++){
+                res(j - 1,i - 1) = temp2(j - 1,0);
             }
         }
     }
@@ -229,7 +228,7 @@ int LUPivotSolve(const Matrix& m, const Matrix& rhs, Matrix& res){ // NEED
 }
 
 int CholeskySolve(const Matrix&m, const Matrix& rhs, Matrix& res){
-    int n = m.row();
+    int n = m.GetNumRows();
     Matrix y(n,1);
     Matrix l(n,n);
     Matrix trans(n,n);
@@ -243,7 +242,7 @@ int CholeskySolve(const Matrix&m, const Matrix& rhs, Matrix& res){
     return 0;
 }
 int LDLSolve(const Matrix& m, const Matrix& rhs, Matrix& res){
-    int n = m.row();
+    int n = m.GetNumRows();
     Matrix y(n,1);
     Matrix l(n,n), d(n,n);
     Matrix trans(n,n);
@@ -256,76 +255,74 @@ int LDLSolve(const Matrix& m, const Matrix& rhs, Matrix& res){
 
 int lowerSolve(const Matrix& l,const Matrix& rhs, Matrix& res) // Array or Vector? I love vector.. Without Check on Dim
 {
-    int n = l.row();
-    res[0][0] = rhs[0][0] / l[0][0];
+    int n = l.GetNumRows();
+    res(0,0) = rhs(0,0) / l(0,0);
     for(int i = 1; i != n; ++i){
         TYPE temp = 0;
         for(int j = 0; j <= i - 1; ++j){
-            temp += l[i][j] * res[j][0];
+            temp += l(i,j) * res(j,0);
         }
-        res[i][0] = (rhs[i][0] - temp) / l[i][i];
+        res(i,0) = (rhs(i,0) - temp) / l(i,i);
     }
     return 0;
 }
 
 int upperSolve(const Matrix& u, const Matrix& rhs, Matrix& res){
-    int n = u.row();
-    res[n - 1][0] = rhs[n - 1][0] / u[n - 1][n - 1];
+    int n = u.GetNumRows();
+    res(n - 1,0) = rhs(n - 1,0) / u(n - 1,n - 1);
     for(int i = n - 2; i >= 0; --i){
         TYPE temp = 0;
         for(int j = i + 1; j != n; ++j){
-            temp += u[i][j] * res[j][0];
+            temp += u(i,j) * res(j,0);
         }
-        res[i][0] = (rhs[i][0] - temp) / u[i][i];
+        res(i,0) = (rhs(i,0) - temp) / u(i,i);
     }
     return 0;
 }
 
-// Destructors
-Matrix::~Matrix(){
-    int i;
-    for (i = 0; i != nRow; i++) {
-        delete [] mat[i];
-    }
-    delete [] mat;
-}
+
+              
+
 
 // Constructors
 Matrix::Matrix():
-nRow(0), nCol(0), mat(nullptr) {
+mNumRows(0), mNumCols(0), data(nullptr) {
 }
 
-Matrix::Matrix(int row, int col):
-nRow(row), nCol(col), mat(new TYPE*[row]) {
-    for(int i = 0; i != row; ++i){
-        mat[i] = new TYPE[col];
+Matrix::Matrix(int inputRow, int inputCol):
+mNumRows(inputRow), mNumCols(inputCol), data(new TYPE*[mNumCols]) {
+    int i,j;
+    for(i = 0; i != mNumCols; ++i){
+        data[i] = new TYPE[mNumRows];
     }
-    for(int i = 0; i != row; ++i)
-        for(int j = 0; j!= col; ++j){
-            mat[i][j] = 0;
+    for (i = 0; i != mNumCols; ++i) {
+        for (j = 0; j != mNumRows; ++j) {
+            data[i][j] = 0;
         }
+    }
 }
 
 Matrix::Matrix(int dim):
-nRow(dim), nCol(dim), mat(new TYPE*[dim]) {
-    for(int i = 0; i != dim; ++i){
-        mat[i] = new TYPE[dim];
+mNumRows(dim), mNumCols(dim), data(new TYPE*[dim]) {
+    int i,j;
+    for(i = 0; i != dim; ++i){
+        data[i] = new TYPE[dim];
     }
-    for(int i = 0; i != dim; ++i)
-        for(int j = 0; j!= dim; ++j){
-            if(i == j) mat[i][j] = 1;
-            else mat[i][j] = 0;
+    for (i = 0; i != mNumCols; ++i) {
+        for (j = 0; j != mNumRows; ++j) {
+            data[i][j] = 0;
         }
+    }
 }
 
 Matrix::Matrix(const Matrix& m):
-nRow(m.row()),nCol(m.col()),mat(new TYPE*[m.row()]){
-    for(int i = 0; i != m.row(); ++i){
-        mat[i] = new TYPE[m.col()];
+mNumRows(m.mNumRows),mNumCols(m.mNumCols),data(new TYPE*[mNumCols]){
+    for(int i = 0; i != mNumCols; ++i){
+        data[i] = new TYPE[mNumRows];
     }
-    for(int i = 0; i != m.row(); ++i)
-        for(int j = 0; j!= m.col(); ++j){
-            mat[i][j] = m[i][j];
+    for(int i = 0; i != mNumCols; ++i)
+        for(int j = 0; j!= mNumRows; ++j){
+            data[i][j] = m[i][j];
         }
 }
 
@@ -334,26 +331,30 @@ nRow(m.row()),nCol(m.col()),mat(new TYPE*[m.row()]){
 // Operators
 
 TYPE* Matrix::operator[](int index){
-    return mat[index];
+    return data[index];
 }
 
 const TYPE* Matrix::operator[](int index) const{
-    return mat[index];
+    return data[index];
 }
 
-TYPE Matrix::operator()(int rowIndex, int colIndex){
-    return mat[rowIndex][colIndex];
+TYPE& Matrix::operator()(int rowIndex, int colIndex){
+    return data[colIndex][rowIndex];
+}
+
+const TYPE& Matrix::operator()(int rowIndex, int colIndex) const{
+    return data[colIndex][rowIndex];
 }
 
 
 
 Matrix& Matrix::operator+=(const Matrix& rhs){
-    if(this->nCol != rhs.col() || this->nRow != rhs.row()){
+    if(mNumCols != rhs.mNumCols || mNumRows != rhs.mNumRows){
         std::cout << "Unequal Dimensions" << std::endl;
     }
-    for(size_t i = 0; i != rhs.row(); ++i){
-        for(size_t j = 0; j != rhs.col(); ++j){
-            mat[i][j] += rhs.mat[i][j];
+    for(size_t i = 0; i != rhs.mNumCols; ++i){
+        for(size_t j = 0; j != rhs.mNumRows; ++j){
+            data[i][j] += rhs.data[i][j];
         }
     }
     return *this;
@@ -363,23 +364,22 @@ Matrix& Matrix::operator-=(const Matrix& rhs){
 }
 
 Matrix& Matrix::operator*=(const TYPE& rhs){
-    for(int i = 0; i != this->nRow; i++)
-        for(int j = 0; j != nCol; j++) {
-            mat[i][j] *= rhs;
+    for(int i = 0; i != mNumCols; i++)
+        for(int j = 0; j != mNumRows; j++) {
+            data[i][j] *= rhs;
         }
     return *this;
 }
 
 Matrix& Matrix::operator/=(const TYPE& rhs){
-    if(rhs == 0) std::cout << "Divide by Zero" << std::endl;
-    return *this *= 1/rhs ;
+    return *this *= 1/rhs;
 }
 
 Matrix& Matrix::operator=(const TYPE* rhs){
     int k = 0;
-    for(int i = 0; i != this->nRow; i++)
-        for(int j = 0; j != this->nCol; j++) {
-            mat[i][j] = rhs[k];
+    for(int i = 0; i != mNumCols; i++)
+        for(int j = 0; j != mNumRows; j++) {
+            data[i][j] = rhs[k];
             k++;
         }
     return *this;
@@ -387,56 +387,56 @@ Matrix& Matrix::operator=(const TYPE* rhs){
 
 Matrix& Matrix::operator=(const vector<TYPE>& rhs){
     int k = 0;
-    for(int i = 0; i != this->nRow; i++)
-        for(int j = 0; j != this->nCol; j++) {
-            mat[i][j] = rhs[k];
+    for(int i = 0; i != mNumCols; i++)
+        for(int j = 0; j != mNumRows; j++) {
+            data[i][j] = rhs[k];
             k++;
         }
     return *this;
 }
 Matrix& Matrix::operator=(const Matrix& rhs){
     int i,j;
-    if(mat == nullptr){
-        this->nRow = rhs.row();
-        this->nCol = rhs.col();
-        mat = new TYPE*[rhs.row()];
-        for(int i = 0; i != rhs.row(); ++i){
-            mat[i] = new TYPE[rhs.col()];
+    if(data == nullptr){
+        mNumRows = rhs.mNumRows;
+        mNumCols = rhs.mNumCols;
+        data = new TYPE*[rhs.mNumCols];
+        for(int i = 0; i != rhs.mNumCols; ++i){
+            data[i] = new TYPE[rhs.mNumRows];
         }
     }
-    if(this->nCol != rhs.col() || this->nRow != rhs.row()){
+    if(mNumCols != rhs.mNumCols || mNumRows != rhs.mNumRows){
         cout << "unequal dimensions cannot assign matrix" << endl;
     }
     else{
-        for(i = 0; i != rhs.row(); i++)
-            for(j = 0; j != rhs.col(); j++){
-                mat[i][j] = rhs[i][j];
+        for(i = 0; i != rhs.mNumCols; i++)
+            for(j = 0; j != rhs.mNumRows; j++){
+                data[i][j] = rhs[i][j];
             }
     }
     return *this;
 }
 
 
-Matrix& Matrix::rowSwap(int i, int j){
+Matrix& Matrix::colSwap(int i, int j){
     if(i != j){
-    TYPE *p = mat[i-1];
-    mat[i-1] = mat[j-1];
-    mat[j-1] = p;
+        TYPE *p = data[i-1];
+        data[i-1] = data[j-1];
+        data[j-1] = p;
     }
     return *this;
 }
 
-Matrix& Matrix::colSwap(int i, int j) { // Mathematical Subscripts
+Matrix& Matrix::rowSwap(int i, int j) { // Mathematical Subscripts
     TYPE temp;
-    for(int k = 0; k != this->nRow; k++){
-        temp = mat[k][i - 1];
-        mat[k][i - 1] = mat[k][j - 1];
-        mat[k][j - 1] = temp;
+    for(int k = 0; k != mNumCols; k++){
+        temp = data[k][i - 1];
+        data[k][i - 1] = data[k][j - 1];
+        data[k][j - 1] = temp;
     }
     return *this;
 }
-bool Matrix::isSquare(){
-    if(this->nRow == this->nCol){
+bool Matrix::square(){
+    if(mNumRows == mNumCols){
         return 1;
     }
     else return 0;
@@ -445,9 +445,9 @@ bool Matrix::isSquare(){
 double Matrix::Norm2Vec(){
     int i,j;
     double sum = 0;
-    for (i = 0; i != this->nRow; i++) {
-        for (j = 0; j != this->nCol; j++) {
-            sum += mat[i][j] * mat[i][j];
+    for (i = 0; i != mNumCols; i++) {
+        for (j = 0; j != mNumRows; j++) {
+            sum += data[i][j] * data[i][j];
         }
     }
     return sqrt(sum);
@@ -455,9 +455,9 @@ double Matrix::Norm2Vec(){
 
 double Matrix::NormInfVec(){
     double max = 0;
-    for (int i = 0; i != this->nRow; i++) {
-        if (std::abs((double) this->mat[i][0]) > max ) {
-            max = std::abs((double) this->mat[i][0]);
+    for (int i = 0; i != this->mNumRows; i++) {
+        if (std::abs((double) this->data[0][i]) > max ) {
+            max = std::abs((double) this->data[0][i]);
         }
     }
     return max;
@@ -467,27 +467,27 @@ Matrix& Matrix::transpose(){
     int i, j;
     TYPE temp;
     // This changes the Matrix itself
-    if(this->nRow != this->nCol){
+    if(mNumRows != mNumCols){
         Matrix copy(*this);
-        delete mat;
-        mat = new TYPE*[this->nCol];
-        for(i = 0; i != this->nCol; i++){
-            mat[i] = new TYPE[this->nRow];
+        delete data;
+        data = new TYPE*[mNumCols];
+        for(i = 0; i != mNumCols; i++){
+            data[i] = new TYPE[mNumRows];
         }
-        for(i = 1; i <= nRow; i++)
-            for(j = 1; j <= nCol; j++){
-                mat[j - 1][i - 1] = copy[i - 1][j - 1];
+        for(i = 1; i <= mNumCols; i++)
+            for(j = 1; j <= mNumRows; j++){
+                data[j - 1][i - 1] = copy[i - 1][j - 1];
             }
-        this->nCol = copy.row();
-        this->nRow = copy.col();
+        mNumCols = copy.mNumRows;
+        mNumRows = copy.mNumCols;
         return *this;
     }
-    for(i = 1; i <= this->nRow; i++)
+    for(i = 1; i <= mNumCols; i++)
         for(j = 1; j < i; j++){
-            if(mat[i - 1][j - 1] != mat[j - 1][i - 1]){
-                temp = mat[i - 1][j - 1];
-                mat[i - 1][j - 1] = mat[j - 1][i - 1];
-                mat[j - 1][i - 1] = temp;
+            if(data[i - 1][j - 1] != data[j - 1][i - 1]){
+                temp = data[i - 1][j - 1];
+                data[i - 1][j - 1] = data[j - 1][i - 1];
+                data[j - 1][i - 1] = temp;
             }
         }
     return *this;
@@ -495,59 +495,59 @@ Matrix& Matrix::transpose(){
 
 int Matrix::transpose(Matrix& res){
     int i, j;
-    for(i = 1; i <= this->nRow; i++)
-        for(j = 1; j <= this->nCol; j++){
-            res[j - 1][i - 1] = mat[i - 1][j - 1];
+    for(i = 1; i <= mNumCols; i++)
+        for(j = 1; j <= mNumRows; j++){
+            res[j - 1][i - 1] = data[i - 1][j - 1];
         }
     return 0;
 }
 
 
 // Public
-
 Matrix operator+(const Matrix& m1, const Matrix& m2){
-    Matrix sum(m1.row(), m1.col());
+    Matrix sum(m1.GetNumRows(), m1.GetNumCols());
     sum = m1;
     sum += m2;
     return sum;
 }
 
 Matrix operator-(const Matrix& m1, const Matrix& m2){
-    Matrix sum(m1.row(), m1.col());
+    Matrix sum(m1.GetNumRows(), m1.GetNumCols());
     sum = m1;
     sum -= m2;
     return sum;
 }
 Matrix operator*(const Matrix& m1, const Matrix& m2){
-    if(m1.col() != m2.row()) std::cout << "Illegal Multiplication" << std::endl;
-    Matrix res(m1.row(), m2.col());
-    for(int i = 0; i != m1.row(); ++i)
-        for(int j = 0; j != m2.col(); ++j)
-            for(int k = 0; k != m1.col(); ++k){
-                res[i][j] += (m1[i][k] * m2[k][j]);
+    if(m1.GetNumCols() != m2.GetNumRows()) std::cout << "Illegal Multiplication" << std::endl;
+    Matrix res(m1.GetNumRows(), m2.GetNumCols());
+    for(int i = 0; i != m1.GetNumRows(); ++i)
+        for(int j = 0; j != m2.GetNumCols(); ++j)
+            for(int k = 0; k != m1.GetNumCols(); ++k){
+                res(i,j) += (m1(i,k) * m2(k,j));
             }
     return res;
 }
 Matrix operator*(const Matrix& m1, const TYPE& num){
-    Matrix res(m1.row(),m1.col());
+    Matrix res(m1.GetNumRows(),m1.GetNumCols());
     res = m1;
     res *= num;
     return res;
 }
 Matrix operator/(const Matrix& m1, const TYPE& num){
-    Matrix res(m1.row(),m1.col());
+    Matrix res(m1.GetNumRows(),m1.GetNumCols());
     res = m1;
     res /= num;
     return res;
 }
 
 
+// Output & Style
 std::ostream& operator<<(std::ostream& out, const Matrix& m){
     int i, j;
-    if(m.mat == nullptr) cout << "Empty Matrix";
-    for (i = 0; i != m.row(); i++){
-        for(j = 0; j!= m.col(); j++){
-            out << m[i][j] << " ";
+    if(m.data == nullptr) cout << "Empty Matrix";
+    for (i = 0; i != m.mNumRows; i++){
+        for(j = 0; j!= m.mNumCols; j++){
+            out << m[j][i] << " ";
         }
         out << std::endl;
     }
@@ -557,16 +557,16 @@ std::ostream& operator<<(std::ostream& out, const Matrix& m){
 std::ostream& latex(std::ostream& out, const Matrix& m, int line){
     int i, j;
     int t = 0;
-    if(m.mat == nullptr) cout << "Empty Matrix";
-    for (i = 0; i != m.row(); i++){
-        for(j = 0; j!= m.col(); j++){
-            if(i == m.row() - 1 && j == m.col() - 1){
-                out << m[i][j] << " " << "\\\\";
+    if(m.data == nullptr) cout << "Empty Matrix";
+    for (i = 0; i != m.mNumRows; i++){
+        for(j = 0; j!= m.mNumCols; j++){
+            if(i == m.mNumRows - 1 && j == m.mNumCols - 1){
+                out << m[j][i] << " " << "\\\\";
             }
             else{
                 t++;
                 if(t == line){
-                    out << m[i][j] << " ";
+                    out << m[j][i] << " ";
                     out << "\\\\";
                     out << endl;
                     out << "\\hline";
@@ -574,13 +574,11 @@ std::ostream& latex(std::ostream& out, const Matrix& m, int line){
                     t = 0;
                 }
                 else{
-                    out << m[i][j] << " " << "&" << " ";
+                    out << m[j][i] << " " << "&" << " ";
                 }
             }
         }
     }
     return out;
 }
-
-
 
