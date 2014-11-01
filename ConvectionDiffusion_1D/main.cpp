@@ -13,8 +13,8 @@
 #include "ConvectionDiffusion_1D.h"
 #include "Tridiagonal.h"
 
-#define C1 0.0001
-#define Delta 0.1
+#define C1 0.1
+#define Delta 0.0001
 
 using std::cout;
 using std::endl;
@@ -51,8 +51,8 @@ int main(int argc, const char * argv[])
     FirstOrderCDSolver sol1(&cd1, &cond1);
     
     sol1.SetInitialTime(0);
-    sol1.SetFinalTime(0.08);
-    sol1.SetNumberNodes(25);
+    sol1.SetFinalTime(5);
+    sol1.SetNumberNodes(80);
     sol1.SetTimeStep(0.001);
 //    sol1.CentralExplicitSolve();
     sol1.UpwindSolve();

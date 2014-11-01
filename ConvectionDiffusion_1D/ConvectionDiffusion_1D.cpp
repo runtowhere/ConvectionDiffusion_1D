@@ -23,7 +23,7 @@ void FirstOrderCDSolver::CentralExplicitSolve(){
 //    cout << uPost;
     double tNow;
     for (int i = 1; (tNow = i * timeStep + initialTime) <= finalTime; i++) {
-        if (ShouldChangeTimeStep()) {
+        if (ShouldChangeTimeStep(tNow, i, uPre)) {
             ;
         }
         ComputeCentral(uPre, uPost, tNow);
@@ -58,7 +58,10 @@ void FirstOrderCDSolver::UpwindSolve(){
     SetInitialValue(uPost);
     double tNow;
     for (int i = 1; (tNow = i * timeStep + initialTime) <= finalTime; i++) {
-        if (ShouldChangeTimeStep()) {}
+        if (ShouldChangeTimeStep(tNow, i, uPre)) {
+            cout << timeStep << " " <<xStep / mpPDE -> mFuncA(tNow, mpCondition -> xMin + i * xStep, uPre[i]) << endl;
+            SetTimeStep(xStep / mpPDE -> mFuncA(tNow, mpCondition -> xMin + i * xStep, uPre[i]) / 2);
+        }
         ComputeUpWind(uPre, uPost, tNow);
     }
 //    mVector ref(nNodes);

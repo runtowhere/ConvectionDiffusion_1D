@@ -8,7 +8,7 @@
 
 #ifndef __MatrixClass__Matrix__
 #define __MatrixClass__Matrix__
-#define TYPE long double
+#define TYPE double
 #include <iostream>
 #include <vector>
 #include <cmath>

@@ -93,7 +93,13 @@ public:
         mpPDE = pde;
     }
 public:
-    bool ShouldChangeTimeStep(){
+    bool ShouldChangeTimeStep(double atTime, int i, mVector& uPre){
+        if (timeStep *  (2 * mpPDE -> mFuncC(atTime, mpCondition -> xMin + i * xStep, uPre[i])
+                         + mpPDE -> mFuncA(atTime, mpCondition -> xMin + i * xStep, uPre[i]) * xStep)
+            > 1
+            ) {
+            return 1;
+        }
         return 0;
     }
     void SetXStep(){
