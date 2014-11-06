@@ -1,14 +1,15 @@
 //
-//  ConvectionDiffusion_1D.h
+//  newSolver.h
 //  ConvectionDiffusion_1D
 //
-//  Created by Li Xinrui on 11/1/14.
+//  Created by ikon on 11/6/14.
 //  Copyright (c) 2014 ___Imaginaire___. All rights reserved.
 //
 
-#ifndef __ConvectionDiffusion_1D__ConvectionDiffusion_1D__
-#define __ConvectionDiffusion_1D__ConvectionDiffusion_1D__
+#ifndef __ConvectionDiffusion_1D__newSolver__
+#define __ConvectionDiffusion_1D__newSolver__
 
+#include <iostream>
 #include <stdio.h>
 #include "Matrix.h"
 
@@ -108,17 +109,12 @@ public:
     void ComputeCentral(mVector& uPre, mVector& uPost, double atTime);
     
     void UpwindSolve();
-    void ComputeUpWind(mVector& uPre, mVector& uPost, double atTime);
-   
+    void ComputeUpWind(mVector& uPre, mVector& uPost, double atTime, double& dt);
+    void ComputeTimeStep(double tNow, mVector& uPre, double& dt);
+};
 // Error when trying to define local function and pFunc to it , How to Fix?
 //    double UpWindFuncC(double t, double x){
 //        return this -> mpPDE -> mFuncC(t,x) + 1 /2.0 * mpPDE -> mFuncA(t,x) * xStep;
 //    }
-    
-};
 
-
-
-
-
-#endif /* defined(__ConvectionDiffusion_1D__ConvectionDiffusion_1D__) */
+#endif /* defined(__ConvectionDiffusion_1D__newSolver__) */

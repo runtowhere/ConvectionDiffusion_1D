@@ -10,10 +10,9 @@
 #include <cmath>
 #include <cassert>
 #include "Matrix.h"
-#include "ConvectionDiffusion_1D.h"
-#include "Tridiagonal.h"
+#include "newSolver.h"
 
-#define C1 0.1
+#define C1 0.000001
 #define Delta 0.0001
 
 using std::cout;
@@ -34,7 +33,7 @@ double rhs(double t, double x, double u){
 
 double initial(double t, double x){
     if (x >= 0 ) {
-        return 1 + Delta;
+        return -1 + Delta;
     }
     else{
         return 1;
@@ -50,14 +49,10 @@ int main(int argc, const char * argv[])
     cond1.SetRegion(-1, 1);
     FirstOrderCDSolver sol1(&cd1, &cond1);
     
+    sol1.SetNumberNodes(20);
     sol1.SetInitialTime(0);
-    sol1.SetFinalTime(5);
-    sol1.SetNumberNodes(80);
-    sol1.SetTimeStep(0.001);
-//    sol1.CentralExplicitSolve();
+    sol1.SetFinalTime(0.3);
     sol1.UpwindSolve();
-
-    
     
     return 0;
 }
