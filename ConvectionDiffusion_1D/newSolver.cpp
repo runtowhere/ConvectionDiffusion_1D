@@ -26,52 +26,50 @@ void FirstOrderCDSolver::ComputeCentral(mVector& uPre, mVector& uPost, double at
     
 void FirstOrderCDSolver::UpwindSolve(){
     SetXStep();
+    double tNow = initialTime;
     mVector uPre(nNodes);
     mVector uPost(nNodes);
     SetInitialValue(uPost);
-    double tNow = 0;
     while (tNow < finalTime) {
-        double dt = 0.001;
         uPre = uPost;
-//        ComputeTimeStep(tNow, uPre, dt);
+        double dt = ComputeTimeStep(tNow, uPre);
+        cout << dt << " t " << endl;
         ComputeUpWind(uPre, uPost, tNow, dt);
         tNow += dt;
     }
-    std::cout << uPost << endl;
+    cout << uPost << endl;
 }
 void FirstOrderCDSolver::ComputeUpWind(mVector& uPre, mVector& uPost, double atTime, double& dt){
+    pFunc fa = mpPDE -> mFuncA;
+    pFunc fc = mpPDE -> mFuncC;
+    for (int i = 1; i != nNodes - 1; i++) {
+        double u = (fc(atTime, xPosition(i), uPre[i]) + 0.5 * std::abs(fa(atTime, xPosition(i), uPre[i]) ) * xStep) * dt / (xStep * xStep);
+        double v = fa(atTime, xPosition(i), uPre[i]) * dt / xStep;
+        uPost[i] = (u - 0.5 * v) * uPre[i + 1] + (1 - 2 * u) * uPre[i] + (u + 0.5 * v) * uPre[i - 1];
+    }
+}
+
+double FirstOrderCDSolver::ComputeTimeStep(double tNow, mVector& uPre){
+    double controller = 0.5;
+    double tMin = controller * ComputeTimeConstraint(tNow, uPre, 0);
+    for (int i = 1; i != nNodes; i++) {
+        double t_i = controller * ComputeTimeConstraint(tNow, uPre, i);
+        if (t_i < tMin) {
+            tMin = t_i;
+        }
+    }
+    if (tNow + tMin > finalTime) {
+        tMin = finalTime - tNow;
+    }
+    return tMin;
+}
+
+double FirstOrderCDSolver::xPosition(int i){
+    return (mpCondition -> xMin + i * xStep);
+}
+
+double FirstOrderCDSolver::ComputeTimeConstraint(double tNow, mVector& uPre, int i){
     pFunc a = mpPDE -> mFuncA;
     pFunc c = mpPDE -> mFuncC;
-    double xMin = mpCondition -> xMin;
-    for (int i = 1; i != nNodes - 1; i++) {
-        double v = a(atTime, xMin + i * xStep, uPre[i]) * dt / xStep;
-        double u = (c(atTime, xMin + i * xStep, uPre[i])
-                 + std::abs(a(atTime, xMin + i * xStep, uPre[i])) * xStep / 2.0)
-                 / (xStep * xStep);
-        uPost[i] = (u - v / 2.0) * uPre[i + 1] + (1 - 2 * u) * uPre[i] + (u + v / 2.0) * uPre[i - 1];
-    }
+    return (xStep * xStep) / (2 * c(tNow, xPosition(i), uPre[i]) + std::abs(a(tNow, xPosition(i), uPre[i]) ) * xStep );
 }
-
-void FirstOrderCDSolver::ComputeTimeStep(double tNow, mVector& uPre, double& dt){
-    double xMin = mpCondition -> xMin;
-    double tMin = 0.2 * (xStep * xStep) / ( 2 * mpPDE -> mFuncC(tNow, xMin, uPre[0])
-                                  + std::abs(mpPDE -> mFuncA(tNow, xMin, uPre[0])) * xStep);
-    for (int i = 1; i != nNodes - 2; i++) {
-        double t;
-        t = 0.2 * (xStep * xStep) / ( 2 * mpPDE -> mFuncC(tNow, xMin + i * xStep, uPre[i])
-                               + std::abs(mpPDE -> mFuncA(tNow, xMin + i * xStep, uPre[i])) * xStep);
-        if (tMin > t) {
-            tMin = t;
-        }
-        if (tMin < 10e-10) {
-            cout << (xStep * xStep) << " h " << 2 * (mpPDE -> mFuncC(tNow, xMin + i * xStep, uPre[i]))
-            << " h " <<  uPre[i] << endl;
-        }
-    }
-    dt = tMin;
-    cout << endl;
-    if (finalTime - tNow < dt) {
-        dt = finalTime - tNow;
-    }
-}
-

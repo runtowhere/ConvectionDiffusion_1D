@@ -10,6 +10,7 @@
 #define __ConvectionDiffusion_1D__newSolver__
 
 #include <iostream>
+#include <cstdlib>
 #include <stdio.h>
 #include "Matrix.h"
 
@@ -110,7 +111,9 @@ public:
     
     void UpwindSolve();
     void ComputeUpWind(mVector& uPre, mVector& uPost, double atTime, double& dt);
-    void ComputeTimeStep(double tNow, mVector& uPre, double& dt);
+    double ComputeTimeStep(double tNow, mVector& uPre);
+    double xPosition(int i);
+    double ComputeTimeConstraint(double tNow, mVector& uPre, int i);
 };
 // Error when trying to define local function and pFunc to it , How to Fix?
 //    double UpWindFuncC(double t, double x){

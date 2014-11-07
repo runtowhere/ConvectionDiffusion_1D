@@ -12,7 +12,7 @@
 #include "Matrix.h"
 #include "newSolver.h"
 
-#define C1 0.000001
+#define C1 0.0001
 #define Delta 0.0001
 
 using std::cout;
@@ -49,9 +49,9 @@ int main(int argc, const char * argv[])
     cond1.SetRegion(-1, 1);
     FirstOrderCDSolver sol1(&cd1, &cond1);
     
-    sol1.SetNumberNodes(20);
+    sol1.SetNumberNodes(200);
     sol1.SetInitialTime(0);
-    sol1.SetFinalTime(0.3);
+    sol1.SetFinalTime(1);
     sol1.UpwindSolve();
     
     return 0;
